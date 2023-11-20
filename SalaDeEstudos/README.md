@@ -2,7 +2,7 @@
 
 A classe "SalaDeEstudos", como o nome sugere, trata-se de um sistema de reserva de sala para estudantes de um determinado cólegio. A partir dela, foi implementada a classe "TabelaHash", que realiza a mesma função, porém, utilizando a lógica de uma Tabela Hash com endereçamento aberto.
 
-# Clase: SalaDeEstudos
+### Clase: SalaDeEstudos
 
 Iniciamos tratando os horários de reserva como posições de um array, existindo ao todo 6 possibilidades de horário para realizar uma reserva. 
 
@@ -12,7 +12,7 @@ Caso o horário esteja disponível o aluno poderá utilizar a sala naquele horá
 
 Além disso, todas as ações ficam salvas num histórico que é impresso no final, a fim de manter o controle de todas as atividades que foram realizadas.
 
-# Classe: HashingOpenAdd
+### Classe: HashingOpenAdd
 
 Essa classe resolve o mesmo problema, porém, utilizando a lógica da Tabela Hash por meio do endereçamento aberto. Vou explicar alguns conceitos importantes:
 
