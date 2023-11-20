@@ -1,5 +1,9 @@
-
 /*
+ * Por quê escolhi endereçamento aberto para implementar essa solução?
+ *      Pois o número de elementos a serem armazenados podem ser previamente estimados. 
+ *          Assim, consigo evitar colisões utilizando os espaços vazios da tabela.
+ * 
+ *
  * @author Arthur Baltar Eler
  */
 import java.util.ArrayList; //Para o histórico
@@ -31,8 +35,8 @@ public class HashingOpenAdd {
     public static void exibeReservas() {
         System.out.println("");
         for (int i = 0; i < 6; i++) {
-            String situacao = sala.pesquisa(horas[i]) == null ? "Disponível"
-                    : "Reservada para " + sala.pesquisa(horas[i]);
+            // Consultando o elemento com base na chave.
+            String situacao = sala.pesquisa(horas[i]) == null ? "Disponível" : "Reservada para " + sala.pesquisa(horas[i]);
             System.out.println(horas[i] + " " + situacao);
         }
         System.out.println("");
@@ -64,7 +68,7 @@ public class HashingOpenAdd {
             }
         } catch (Exception e) {
             System.err.println("Erro ao cancelar a reserva: " + e.getMessage());
-            e.printStackTrace(); // Isso imprime o stack trace para diagnóstico
+            e.printStackTrace(); // Isso imprime o "stack trace" para diagnóstico.
         }
     }
 
@@ -76,6 +80,19 @@ public class HashingOpenAdd {
     }
 }
 
+/*
+ * Quando se insere um novo elemento na tabela , uma nova célula é criada e
+ * inserida na posição correspondente.
+ * Cada celula armazena as informações de chave e do item que está naquela
+ * posição e se ele foi removido.
+ * 
+ * 
+ * Se você posteriormente remove um elemento da tabela (retira), a célula é
+ * marcada como retirada,
+ * mas não é removida fisicamente, pois isso poderia interferir nas buscas
+ * futuras. Assim, problemas de colisões são resolvidos
+ * sem exigir uma reorganização completa da tabela.
+ */
 class Celula {
     String chave;
     Object item;
@@ -106,10 +123,19 @@ class TabelaHash {
         this.pesos = this.geraPesos(maxTamChave);
     }
 
+    /* Gera um array de pesos que será usado na função de hash (h).
+     * 
+     * 
+     * Cada peso é um número inteiro aleatório entre 1 e M (o tamanho da tabela
+     * hash).
+     * A ideia por trás disso é introduzir aleatoriedade no processo de hashing para
+     * evitar padrões que poderiam levar a colisões frequentes.
+     */
     private int[] geraPesos(int n) {
         int[] p = new int[n];
         java.util.Random rand = new java.util.Random();
 
+        // Preenche as posições dos arrays com os respectivos pesos.
         for (int i = 0; i < n; i++) {
             p[i] = rand.nextInt(M) + 1;
         }
@@ -117,6 +143,27 @@ class TabelaHash {
         return p;
     }
 
+    /* Esta função é a hash.
+     * 
+     * Recebe uma chave (nesse caso, uma string) e os pesos associados.
+     * Ela calcula um valor de hash para a chave usando a soma ponderada dos valores
+     * ASCII dos caracteres da chave
+     * multiplicados pelos pesos correspondentes.
+     */
+    private int h(String chave, int[] pesos) {
+        int soma = 0;
+
+        for (int i = 0; i < chave.length(); i++) {
+            soma = soma + ((int) chave.charAt(i)) * pesos[i];
+        }
+
+        return soma % this.M;
+    }
+
+    /* Serve para consultar um elemento com base na chave.
+     * Retorna o item associado à chave fornecida se a chave estiver presente na
+     * tabela hash e null se a chave não for encontrada.
+     */
     public Object pesquisa(String chave) {
         int indice = this.pesquisaIndice(chave);
         if (indice < this.M)
@@ -140,17 +187,6 @@ class TabelaHash {
             System.out.println("Registro já está presente");
     }
 
-    private int pesquisaIndice(String chave) {
-        int inicial = this.h(chave, this.pesos);
-        int indice = inicial, i = 0;
-        while (this.tabela[indice] != null && !chave.equals(this.tabela[indice].chave) && i < this.M)
-            indice = (inicial + (++i)) % this.M;
-        if (this.tabela[indice] != null && chave.equals(this.tabela[indice].chave))
-            return indice;
-        else
-            return this.M; // pesquisa sem sucesso
-    }
-
     public void retira(String chave) throws Exception {
         int i = this.pesquisaIndice(chave);
         if (i < this.M) {
@@ -160,14 +196,19 @@ class TabelaHash {
             System.out.println("Registro não está presente");
     }
 
-    private int h(String chave, int[] pesos) {
-        int soma = 0;
-
-        for (int i = 0; i < chave.length(); i++) {
-            soma = soma + ((int) chave.charAt(i)) * pesos[i];
-        }
-
-        return soma % this.M;
+    /* Encontrar o indíce onde um elemento deveria estar usando rehashing linear.
+     * 
+     * Rehashing linear: usada pra evitar colisões.
+     */
+    private int pesquisaIndice(String chave) {
+        int inicial = this.h(chave, this.pesos);
+        int indice = inicial, i = 0;
+        while (this.tabela[indice] != null && !chave.equals(this.tabela[indice].chave) && i < this.M)
+            indice = (inicial + (++i)) % this.M;
+        if (this.tabela[indice] != null && chave.equals(this.tabela[indice].chave))
+            return indice;
+        else
+            return this.M; // pesquisa sem sucesso
     }
 
 }

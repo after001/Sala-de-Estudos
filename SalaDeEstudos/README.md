@@ -20,3 +20,5 @@ Essa classe resolve o mesmo problema, porém, utilizando a lógica da Tabela Has
 
 * Endereçamento aberto: utilizado para tratar colisões na tabela, isto é, quando duas ou mais chaves podem ser transformadas em um mesmo endereço de tabela.
 
+// Em atualização.
+
