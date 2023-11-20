@@ -14,4 +14,9 @@ Além disso, todas as ações ficam salvas num histórico que é impresso no fin
 
 # Classe: HashingOpenAdd
 
-// Atualizando.
+Essa classe resolve o mesmo problema, porém, utilizando a lógica da Tabela Hash por meio do endereçamento aberto. Vou explicar alguns conceitos importantes:
+
+* Chaves: Como se sabe, as tabelas são uma forma de armazenar dados, nesse contexto, é feito uma transformação aritmética para endereçar os elementos nessa tabela. Dessa forma, chaves podem ser entendidas como o indíce da posição baseado no conteúdo do elemento a ser armazenado.
+
+* Endereçamento aberto: utilizado para tratar colisões na tabela, isto é, quando duas ou mais chaves podem ser transformadas em um mesmo endereço de tabela.
+

@@ -1,3 +1,4 @@
+
 /*
  * @author Arthur Baltar Eler
  */
@@ -30,7 +31,8 @@ public class HashingOpenAdd {
     public static void exibeReservas() {
         System.out.println("");
         for (int i = 0; i < 6; i++) {
-            String situacao = sala.pesquisa(horas[i]) == null ? "Disponível" : "Reservada para " + sala.pesquisa(horas[i]);
+            String situacao = sala.pesquisa(horas[i]) == null ? "Disponível"
+                    : "Reservada para " + sala.pesquisa(horas[i]);
             System.out.println(horas[i] + " " + situacao);
         }
         System.out.println("");
@@ -104,6 +106,17 @@ class TabelaHash {
         this.pesos = this.geraPesos(maxTamChave);
     }
 
+    private int[] geraPesos(int n) {
+        int[] p = new int[n];
+        java.util.Random rand = new java.util.Random();
+
+        for (int i = 0; i < n; i++) {
+            p[i] = rand.nextInt(M) + 1;
+        }
+
+        return p;
+    }
+
     public Object pesquisa(String chave) {
         int indice = this.pesquisaIndice(chave);
         if (indice < this.M)
@@ -145,17 +158,6 @@ class TabelaHash {
             this.tabela[i].chave = null;
         } else
             System.out.println("Registro não está presente");
-    }
-
-    private int[] geraPesos(int n) {
-        int[] p = new int[n];
-        java.util.Random rand = new java.util.Random();
-
-        for (int i = 0; i < n; i++) {
-            p[i] = rand.nextInt(M) + 1;
-        }
-
-        return p;
     }
 
     private int h(String chave, int[] pesos) {
