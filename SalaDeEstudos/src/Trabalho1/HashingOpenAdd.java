@@ -1,3 +1,4 @@
+package Trabalho1;
 /*
  * Por quê escolhi endereçamento aberto para implementar essa solução?
  *      Pois o número de elementos a serem armazenados podem ser previamente estimados. 
