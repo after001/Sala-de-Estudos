@@ -2,9 +2,16 @@
  * 
  * @author Arthur
  */
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class ReservaLabs {
+    private static Map<String, Pilha> reservas = new HashMap<>();
+    private static String[][] Labs = new String[7][3];
+
     public static void main(String[] args) {
-        String[][] Labs = new String[7][3];
+        Labs[0][0] = "L/ H";
         Labs[1][0] = "07:00";
         Labs[2][0] = "08:40";
         Labs[3][0] = "10:35";
@@ -13,6 +20,23 @@ public class ReservaLabs {
         Labs[6][0] = "16:35";
         Labs[0][1] = "L3";
         Labs[0][2] = "LES";
+
+        imprimirMatriz(Labs);
+        System.out.println();
+
+        addReserva("M1", "L3", "08:40");
+        addReserva("M1", "L3", "10:35");
+        addReserva("M1", "LES", "13:00");
+        addReserva("M2", "LES", "14:40");
+        addReserva("M2", "L3", "16:35");
+
+        desfazerReserva("M1");
+        desfazerReserva("M2");
+
+        addReserva("M2", "LES", "16:35");
+
+        salvaReservas("M1");
+        salvaReservas("M2");
 
         imprimirMatriz(Labs);
     }
@@ -35,58 +59,162 @@ public class ReservaLabs {
     }
 
     public static void addReserva(String matricula, String lab, String horario) {
+        // Verifica se o mapa já possui uma pilha para a matrícula
+        if (!reservas.containsKey(matricula)) {
+            reservas.put(matricula, new Pilha());
+        }
 
+        Pilha pilhaReservas = reservas.get(matricula);
+
+        // Verifica se o monitor já tem uma reserva no mesmo horário
+        if (!verificaHorarioDisponivel(pilhaReservas, horario)) {
+            System.out.println("Erro: O monitor " + matricula + " já possui uma reserva para o horário " + horario);
+            return;
+        }
+
+        // Adiciona a reserva à pilha correspondente
+        pilhaReservas.empilha(lab + " " + horario);
+    }
+
+    private static boolean verificaHorarioDisponivel(Pilha pilhaReservas, String horario) {
+        // Verifica se o monitor já tem uma reserva no mesmo horário
+        for (int i = 0; i < pilhaReservas.tamanho(); i++) {
+            try {
+                String reserva = (String) pilhaReservas.desempilha();
+                if (reserva.endsWith(horario)) {
+                    // Devolve o valor desempilhado para manter a pilha inalterada
+                    pilhaReservas.empilha(reserva);
+                    return false;
+                }
+                pilhaReservas.empilha(reserva);
+            } catch (Exception e) {
+                System.err.println("Erro ao verificar horário disponível: " + e.getMessage());
+            }
+        }
+        return true;
     }
 
     public static void desfazerReserva(String matricula) {
-
+        // Verifica se há reservas para a matrícula
+        if (reservas.containsKey(matricula) && !reservas.get(matricula).vazia()) {
+            try {
+                // Desempilha a última reserva
+                reservas.get(matricula).desempilha();
+            } catch (Exception e) {
+                // Trata a exceção (pode imprimir uma mensagem ou realizar outra ação)
+                System.err.println("Erro ao desempilhar: " + e.getMessage());
+            }
+        }
     }
 
     public static void salvaReservas(String matricula) {
+        // Verifica se o monitor tem reservas
+        if (reservas.containsKey(matricula)) {
+            Pilha pilhaReservas = reservas.get(matricula);
 
+            // Processa cada reserva na pilha
+            while (!pilhaReservas.vazia()) {
+                try {
+                    String reserva = (String) pilhaReservas.desempilha();
+
+                    // Extrai informações da reserva
+                    String[] partes = reserva.split(" ");
+                    String lab = partes[0];
+                    String horario = partes[1];
+
+                    // Encontra as posições na matriz Labs correspondentes ao laboratório e horário
+                    int linha = encontraIndiceHorario(horario);
+                    int coluna = encontraIndiceLaboratorio(lab);
+
+                    // Salva o nome do monitor na matriz Labs
+                    Labs[linha][coluna] = matricula;
+                } catch (Exception e) {
+                    System.err.println("Erro ao processar reserva: " + e.getMessage());
+                }
+            }
+        } else {
+            System.out.println("Erro: O monitor " + matricula + " não possui reservas a serem salvas.");
+        }
+    }
+
+    private static int encontraIndiceHorario(String horario) {
+        // Implemente a lógica para encontrar o índice da matriz Labs correspondente ao
+        // horário
+        // (por exemplo, converta "08:40" para a linha 2)
+        // Neste exemplo, apenas uma lógica simples para ilustração está sendo usada:
+        switch (horario) {
+            case "07:00":
+                return 1;
+            case "08:40":
+                return 2;
+            case "10:35":
+                return 3;
+            case "13:00":
+                return 4;
+            case "14:40":
+                return 5;
+            case "16:35":
+                return 6;
+            default:
+                return -1; // Caso não seja encontrado, retorne -1 ou lide com isso conforme necessário
+        }
+    }
+
+    private static int encontraIndiceLaboratorio(String lab) {
+        // Implemente a lógica para encontrar o índice da matriz Labs correspondente ao
+        // laboratório
+        // (por exemplo, converta "L3" para a coluna 1)
+        // Neste exemplo, apenas uma lógica simples para ilustração está sendo usada:
+        switch (lab) {
+            case "L3":
+                return 1;
+            case "LES":
+                return 2;
+            default:
+                return -1; // Caso não seja encontrado, retorne -1 ou lide com isso conforme necessário
+        }
+    }
+
+    static class Pilha { // Com estruturas auto-referenciadas
+        private static class Celula {
+            Object item;
+            Celula prox;
+        }
+
+        private Celula topo;
+        private int tam;
+
+        // Operações
+        public Pilha() { // Cria uma Pilha vazia
+            this.topo = null;
+            this.tam = 0;
+        }
+
+        void empilha(Object x) {
+            Celula aux = this.topo;
+            this.topo = new Celula();
+            this.topo.item = x;
+            this.topo.prox = aux;
+            this.tam++;
+        }
+
+        public boolean vazia() {
+            return (this.topo == null);
+        }
+
+        public int tamanho() {
+            return this.tam;
+        }
+
+        public Object desempilha() throws Exception {
+            if (this.vazia())
+                throw new Exception("Erro : A pilha esta vazia");
+
+            Object item = this.topo.item;
+
+            this.topo = this.topo.prox;
+            this.tam--;
+            return item;
+        }
     }
 }
-
-class Pilha {   // Com estruturas auto-referenciadas
-    private static class Celula {
-        Object item;
-        Celula prox;
-    }
-
-    private Celula topo;
-    private int tam;
-
-    // Operações
-    public Pilha() { // Cria uma Pilha vazia
-        this.topo = null;
-        this.tam = 0;
-    }
-
-    void empilha(Object x) {
-        Celula aux = this.topo;
-        this.topo = new Celula();
-        this.topo.item = x;
-        this.topo.prox = aux;
-        this.tam++;
-    }
-
-    public boolean vazia() {
-        return (this.topo == null);
-    }
-
-    public int tamanho() {
-        return this.tam;
-    }
-
-    public Object desempilha() throws Exception {
-        if (this.vazia())
-            throw new Exception("Erro : A pilha esta vazia");
-
-        Object item = this.topo.item;
-
-        this.topo = this.topo.prox;
-        this.tam--;
-        return item;
-    }
-}
-
