@@ -11,7 +11,7 @@ import java.util.Map;
  * E as melhores coisas não tem lógica?
  */
 public class ReservaLabs {
-    private static Map<String, Pilha> reservas = new HashMap<>();
+    private static Map<String, Pilha> reservas = new HashMap<>(); // mapeia strings para objetos do tipo Pilha.
     private static String[][] Labs = new String[7][3];
 
     public static void main(String[] args) {
@@ -70,13 +70,12 @@ public class ReservaLabs {
 
         Pilha pilhaReservas = reservas.get(matricula);
 
-        // Verifica se o monitor já tem uma reserva no mesmo horário
+        // Verifica se o monitor já tem uma reserva no mesmo horário no outro Lab
         if (!verificaHorarioDisponivel(pilhaReservas, horario)) {
             System.out.println("Erro: O monitor " + matricula + " já possui uma reserva para o horário " + horario);
             return;
         }
 
-        // Adiciona a reserva à pilha correspondente
         pilhaReservas.empilha(lab + " " + horario);
     }
 
@@ -86,7 +85,6 @@ public class ReservaLabs {
             try {
                 String reserva = (String) pilhaReservas.desempilha();
                 if (reserva.endsWith(horario)) {
-                    // Devolve o valor desempilhado para manter a pilha inalterada
                     pilhaReservas.empilha(reserva);
                     return false;
                 }
@@ -113,12 +111,10 @@ public class ReservaLabs {
         if (reservas.containsKey(matricula)) {
             Pilha pilhaReservas = reservas.get(matricula);
 
-            // Processa cada reserva na pilha
             while (!pilhaReservas.vazia()) {
                 try {
                     String reserva = (String) pilhaReservas.desempilha();
 
-                    // Extrai informações da reserva
                     String[] partes = reserva.split(" ");
                     String lab = partes[0];
                     String horario = partes[1];
@@ -177,8 +173,7 @@ public class ReservaLabs {
         private Celula topo;
         private int tam;
 
-        // Operações
-        public Pilha() { // Cria uma Pilha vazia
+        public Pilha() {
             this.topo = null;
             this.tam = 0;
         }
