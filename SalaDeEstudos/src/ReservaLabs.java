@@ -5,7 +5,11 @@
 
 import java.util.HashMap;
 import java.util.Map;
-
+/*
+ * Para quê tantos códigos, 
+ * Se a vida não é programada
+ * E as melhores coisas não tem lógica?
+ */
 public class ReservaLabs {
     private static Map<String, Pilha> reservas = new HashMap<>();
     private static String[][] Labs = new String[7][3];
@@ -95,13 +99,10 @@ public class ReservaLabs {
     }
 
     public static void desfazerReserva(String matricula) {
-        // Verifica se há reservas para a matrícula
         if (reservas.containsKey(matricula) && !reservas.get(matricula).vazia()) {
             try {
-                // Desempilha a última reserva
                 reservas.get(matricula).desempilha();
             } catch (Exception e) {
-                // Trata a exceção (pode imprimir uma mensagem ou realizar outra ação)
                 System.err.println("Erro ao desempilhar: " + e.getMessage());
             }
         }
@@ -138,10 +139,6 @@ public class ReservaLabs {
     }
 
     private static int encontraIndiceHorario(String horario) {
-        // Implemente a lógica para encontrar o índice da matriz Labs correspondente ao
-        // horário
-        // (por exemplo, converta "08:40" para a linha 2)
-        // Neste exemplo, apenas uma lógica simples para ilustração está sendo usada:
         switch (horario) {
             case "07:00":
                 return 1;
@@ -156,22 +153,18 @@ public class ReservaLabs {
             case "16:35":
                 return 6;
             default:
-                return -1; // Caso não seja encontrado, retorne -1 ou lide com isso conforme necessário
+                return -1; 
         }
     }
 
     private static int encontraIndiceLaboratorio(String lab) {
-        // Implemente a lógica para encontrar o índice da matriz Labs correspondente ao
-        // laboratório
-        // (por exemplo, converta "L3" para a coluna 1)
-        // Neste exemplo, apenas uma lógica simples para ilustração está sendo usada:
         switch (lab) {
             case "L3":
                 return 1;
             case "LES":
                 return 2;
             default:
-                return -1; // Caso não seja encontrado, retorne -1 ou lide com isso conforme necessário
+                return -1;
         }
     }
 
